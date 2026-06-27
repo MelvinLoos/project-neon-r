@@ -4,7 +4,8 @@
     "reduceMotion": "Reduce Motion",
     "clearTypography": "Clear Typography",
     "overstimulationMode": "Stimulation Control",
-    "welcome": "Welcome to Neon R"
+    "welcome": "Welcome to Neon R",
+    "retreat": "Retreat"
   },
   "hints": {
     "bruteForceTitle": "Brute-Force Protocol",

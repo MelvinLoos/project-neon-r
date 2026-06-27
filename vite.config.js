@@ -12,10 +12,10 @@ export default defineConfig({
         enabled: true,
       },
       manifest: {
-        name: 'My Vue App',
-        short_name: 'VueApp',
-        description: 'My awesome Vue PWA',
-        theme_color: '#ffffff',
+        name: 'Project NEON-R',
+        short_name: 'NEON-R',
+        description: 'A location-aware cyberpunk PWA for community-driven puzzle adventures.',
+        theme_color: '#0a0a0a',
         icons: [
           {
             src: 'pwa-192x192.png',

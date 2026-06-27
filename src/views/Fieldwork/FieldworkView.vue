@@ -1,23 +1,28 @@
 <template>
-  <div class="fieldwork-view h-screen w-screen flex flex-col bg-gray-900 overflow-hidden relative">
+  <div class="fieldwork-view h-screen w-screen flex flex-col bg-neutral overflow-hidden relative font-mono">
     
     <!-- Top HUD Overlay -->
-    <div class="absolute top-0 left-0 w-full z-10 p-4 pointer-events-none flex flex-col gap-2">
-      <div class="flex justify-between items-center bg-black/60 backdrop-blur-sm p-3 rounded-xl border border-primary/50 shadow-[0_0_15px_rgba(255,0,255,0.2)]">
-        <div class="text-primary font-bold text-lg tracking-widest uppercase">
-          Sector Agent Active
+    <div class="absolute top-0 left-0 w-full z-10 p-2 sm:p-4 pointer-events-none flex flex-col gap-2">
+      <div class="flex justify-between items-center bg-black/60 backdrop-blur-sm p-2 sm:p-3 rounded-xl border border-primary/50 shadow-[0_0_15px_rgba(255,0,255,0.2)]">
+        <div class="flex items-center gap-2 sm:gap-3">
+          <button @click="router.push({ name: 'home' })" class="btn btn-xs btn-outline btn-primary pointer-events-auto uppercase tracking-wider font-bold text-[10px] sm:text-xs">
+            [ {{ $t('app.retreat') }} ]
+          </button>
+          <div class="text-primary font-bold text-xs sm:text-base md:text-lg tracking-widest uppercase">
+            Sector Agent Active
+          </div>
         </div>
-        <div class="flex items-center gap-3">
-          <div class="text-xs text-info uppercase animate-pulse">
-            GPS Signal: <span class="font-mono">{{ gpsStatus }}</span>
+        <div class="flex items-center gap-2 sm:gap-3">
+          <div class="text-[10px] sm:text-xs text-info uppercase animate-pulse">
+            GPS: <span class="font-mono">{{ gpsStatus }}</span>
           </div>
         </div>
       </div>
       
       <!-- Global Threat Level -->
-      <div class="bg-black/80 p-3 rounded-lg border border-error/40 backdrop-blur-md">
-        <div class="flex justify-between text-xs mb-1">
-          <span class="text-error uppercase font-bold tracking-wider">Global Threat Level</span>
+      <div class="bg-neutral/80 p-2 sm:p-3 rounded-lg border border-error/40 backdrop-blur-md">
+        <div class="flex justify-between text-[10px] sm:text-xs mb-1">
+          <span class="text-error uppercase font-bold tracking-wider">Threat</span>
           <span class="text-error font-mono">{{ threatLevel }}%</span>
         </div>
         <progress class="progress progress-error w-full bg-error/20" :value="threatLevel" max="100"></progress>
@@ -28,32 +33,32 @@
     <div ref="mapContainer" class="flex-grow w-full h-full z-0"></div>
 
     <!-- Bottom Action Area -->
-    <div class="absolute bottom-0 left-0 w-full z-10 p-4 pointer-events-none">
-      <div class="bg-black/80 backdrop-blur-md p-4 rounded-xl border border-secondary/50 pointer-events-auto shadow-[0_0_20px_rgba(0,255,255,0.1)]">
+    <div class="absolute bottom-0 left-0 w-full z-10 p-2 sm:p-4 pointer-events-none">
+      <div class="bg-neutral/80 backdrop-blur-md p-3 sm:p-4 rounded-xl border border-secondary/50 pointer-events-auto shadow-[0_0_20px_rgba(0,255,255,0.1)]">
         
-        <div v-if="activeTarget" class="flex flex-col gap-3">
+        <div v-if="activeTarget" class="flex flex-col gap-2 sm:gap-3">
           <div class="flex justify-between items-start">
             <div>
-              <h3 class="text-secondary font-bold text-xl">{{ activeTarget.name }}</h3>
-              <p class="text-sm text-gray-400">Distance: <span class="font-mono text-white">{{ formatDistance(distanceToTarget) }}</span></p>
+              <h3 class="text-secondary font-bold text-base sm:text-xl">{{ activeTarget.name }}</h3>
+              <p class="text-xs sm:text-sm text-gray-400">Distance: <span class="font-mono text-white">{{ formatDistance(distanceToTarget) }}</span></p>
             </div>
-            <div class="badge" :class="isAtTarget ? 'badge-success' : 'badge-warning min-w-[80px]'">
-              {{ isAtTarget ? 'IN RANGE' : 'APPROACHING' }}
+            <div class="badge text-[10px] sm:text-xs" :class="isAtTarget ? 'badge-success' : 'badge-warning min-w-[60px] sm:min-w-[80px]'">
+              {{ isAtTarget ? 'IN RANGE' : 'APPROACH' }}
             </div>
           </div>
           
           <button 
-            class="btn btn-secondary w-full uppercase tracking-widest font-bold"
+            class="btn btn-secondary w-full uppercase tracking-wider sm:tracking-widest font-bold text-xs sm:text-sm"
             :disabled="!isAtTarget"
             @click="unlockPuzzle"
           >
-            {{ isAtTarget ? 'Initiate Hack Sequence' : 'Move Closer to Target' }}
+            {{ isAtTarget ? 'Initiate Hack' : 'Move Closer' }}
           </button>
         </div>
         
-        <div v-else class="text-center py-4">
-          <p class="text-gray-400 italic">Scanning for nearby nodes...</p>
-          <span class="loading loading-ring loading-md text-primary mt-2"></span>
+        <div v-else class="text-center py-2 sm:py-4">
+          <p class="text-gray-400 italic text-xs sm:text-sm">Scanning for nearby nodes...</p>
+          <span class="loading loading-ring loading-sm sm:loading-md text-primary mt-2"></span>
         </div>
 
       </div>
@@ -63,10 +68,12 @@
 
 <script setup>
 import { ref, onMounted, onUnmounted, shallowRef } from 'vue';
+import { useRouter } from 'vue-router';
 import mapboxgl from 'mapbox-gl';
 import * as turf from '@turf/turf';
 
 // === State ===
+const router = useRouter();
 const mapContainer = ref(null);
 const map = shallowRef(null);
 const userLocation = ref(null); // [lng, lat]

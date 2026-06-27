@@ -3,7 +3,9 @@
     "title": "Project Neon R",
     "reduceMotion": "Beweging Verminderen",
     "clearTypography": "Duidelijke Typografie",
-    "welcome": "Welkom bij Neon R"
+    "overstimulationMode": "Prikkelbeheersing",
+    "welcome": "Welkom bij Neon R",
+    "retreat": "Terugtrekken"
   },
   "hints": {
     "bruteForceTitle": "Brute-Force Protocol",
