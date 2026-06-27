@@ -5,6 +5,7 @@ import router from "./router";
 import i18n from "./i18n";
 import "./style.css";
 import "augmented-ui/augmented-ui.min.css";
+import { initAudio } from "./services/audioSystem";
 
 const app = createApp(App);
 const pinia = createPinia();
@@ -21,5 +22,8 @@ const teamStore = useTeamStore();
 
 userStore.init();
 teamStore.init();
+
+// Initialize audio before mounting
+initAudio();
 
 app.mount("#app");
