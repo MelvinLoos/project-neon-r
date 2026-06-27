@@ -102,7 +102,7 @@ const isAtTarget = ref(false);
 const userMarker = shallowRef(null);
 const targetMarkers = ref([]);
 
-// Make sure you replace this with an actual token or environment variable
+// Mapbox access token must be set in .env as VITE_MAPBOX_TOKEN
 mapboxgl.accessToken = import.meta.env.VITE_MAPBOX_TOKEN;
 
 // === Initialization ===
