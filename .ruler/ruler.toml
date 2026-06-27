@@ -1,0 +1,35 @@
+# Ruler Configuration File for Project NEON-R
+# See https://ai.intellectronica.net/ruler for documentation.
+
+# We activeren standaard de meest populaire web-development AI agents.
+default_agents = ["cursor", "copilot", "cline", "windsurf", "aider"]
+
+# We zetten 'nested' op true. Hierdoor leest Ruler alle .md bestanden
+# die we in de .ruler/ map plaatsen en voegt deze samen.
+nested = true
+
+[gitignore]
+enabled = true
+local = false
+
+# --- Agent Specific Configurations ---
+
+[agents.cursor]
+enabled = true
+# Output wordt automatisch .cursorrules
+
+[agents.copilot]
+enabled = true
+output_path = ".github/copilot-instructions.md"
+
+[agents.cline]
+enabled = true
+# Output wordt automatisch .clinerules
+
+[agents.windsurf]
+enabled = true
+# Output wordt automatisch .windsurfrules
+
+[agents.aider]
+enabled = true
+output_path_instructions = ".aider.chat.history.md"
