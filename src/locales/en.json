@@ -5,5 +5,18 @@
     "clearTypography": "Clear Typography",
     "overstimulationMode": "Stimulation Control",
     "welcome": "Welcome to Neon R"
+  },
+  "hints": {
+    "bruteForceTitle": "Brute-Force Protocol",
+    "noTimePressure": "Take your time. No time limit or penalties.",
+    "analyzing1": "Decrypting Hint 1...",
+    "revealHint1": "Access Hint 1",
+    "analyzing2": "Decrypting Hint 2...",
+    "revealHint2": "Access Hint 2",
+    "analyzingBypass": "Generating Auto-Bypass...",
+    "triggerBypass": "Execute Auto-Bypass",
+    "hint1Label": "Hint 1",
+    "hint2Label": "Hint 2",
+    "statusUnlocked": "Unlocked"
   }
 }

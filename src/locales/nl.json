@@ -4,5 +4,18 @@
     "reduceMotion": "Beweging Verminderen",
     "clearTypography": "Duidelijke Typografie",
     "welcome": "Welkom bij Neon R"
+  },
+  "hints": {
+    "bruteForceTitle": "Brute-Force Protocol",
+    "noTimePressure": "Neem je tijd. Geen tijdslimiet of minpunten.",
+    "analyzing1": "Hint 1 ontsleutelen...",
+    "revealHint1": "Toon Hint 1",
+    "analyzing2": "Hint 2 ontsleutelen...",
+    "revealHint2": "Toon Hint 2",
+    "analyzingBypass": "Auto-Bypass genereren...",
+    "triggerBypass": "Auto-Bypass Uitvoeren",
+    "hint1Label": "Hint 1",
+    "hint2Label": "Hint 2",
+    "statusUnlocked": "Ontgrendeld"
   }
 }
