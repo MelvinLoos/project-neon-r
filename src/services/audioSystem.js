@@ -1,6 +1,7 @@
 import { Howl, Howler } from 'howler';
 
 let bleepSound;
+let warningSound;
 let synthSound;
 
 export const initAudio = () => {
@@ -16,6 +17,12 @@ export const initAudio = () => {
         volume: 0.3,
         loop: true,
     });
+
+    warningSound = new Howl({
+        src: ['/audio/warning.mp3', '/audio/warning.wav'],
+        volume: 0.6,
+        loop: true,
+    });
 };
 
 export const playBleep = () => {
@@ -27,6 +34,18 @@ export const playBleep = () => {
 export const playSynth = () => {
     if (synthSound && !synthSound.playing() && Howler.mute() === false) {
         synthSound.play();
+    }
+};
+
+export const playWarning = () => {
+    if (warningSound && !warningSound.playing() && Howler.mute() === false) {
+        warningSound.play();
+    }
+};
+
+export const stopWarning = () => {
+    if (warningSound) {
+        warningSound.stop();
     }
 };
 

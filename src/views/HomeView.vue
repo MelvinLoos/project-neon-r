@@ -55,6 +55,10 @@
           <p>This is the Fibonacci sequence. The next number is 8+13.</p>
         </template>
       </TimeReleasedHints>
+
+      <div class="mt-8">
+        <router-link to="/phase-1" class="btn btn-secondary">Go to Phase 1 Briefing</router-link>
+      </div>
     </main>
   </div>
 </template>
