@@ -56,8 +56,9 @@
         </template>
       </TimeReleasedHints>
 
-      <div class="mt-8">
+      <div class="flex gap-4 mt-8">
         <router-link to="/phase-1" class="btn btn-secondary">Go to Phase 1 Briefing</router-link>
+        <router-link to="/fieldwork" class="btn btn-primary cyber-button">Open Fieldwork View</router-link>
       </div>
     </main>
   </div>
@@ -98,5 +99,27 @@ onMounted(() => {
 }
 .cyber-box:hover {
   --aug-border-bg: var(--fallback-a,oklch(var(--a)/var(--tw-border-opacity)));
+}
+
+.cyber-button {
+  text-transform: uppercase;
+  letter-spacing: 0.1em;
+  position: relative;
+  overflow: hidden;
+}
+
+.cyber-button::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: -100%;
+  width: 100%;
+  height: 100%;
+  background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.2), transparent);
+  transition: all 0.5s ease;
+}
+
+.cyber-button:hover::before {
+  left: 100%;
 }
 </style>
