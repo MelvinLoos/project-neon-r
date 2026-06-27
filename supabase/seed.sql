@@ -1,0 +1,2 @@
+-- Optional seed data for local development.
+-- The initial game state is seeded by the migration in migrations/000000000000_init_puzzles.sql.

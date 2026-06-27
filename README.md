@@ -100,8 +100,10 @@ The game is split into three phases:
 
 - [Node.js](https://nodejs.org/) 18+ (LTS recommended)
 - npm (comes with Node.js)
-- A [Supabase](https://supabase.com/) project (free tier is fine)
+- [Docker](https://www.docker.com/) (required for the local Supabase stack)
+- [Supabase CLI](https://supabase.com/docs/guides/cli) (for local development)
 - A [Mapbox](https://www.mapbox.com/) access token (free tier is fine)
+- (Production only) A [Supabase](https://supabase.com/) project
 
 ---
 
@@ -120,23 +122,41 @@ The game is split into three phases:
    npm install
    ```
 
-3. **Configure environment variables**
+3. **Start the local Supabase stack (for development)**
+
+   The project is configured to run against a local Supabase instance. Make sure you have the [Supabase CLI](https://supabase.com/docs/guides/cli) installed and Docker running, then run:
+
+   ```bash
+   supabase start
+   ```
+
+   This will start the Postgres database, Auth, REST API, Realtime, and Studio on the ports configured in `supabase/config.toml` (default for this project is the `5532x` range to avoid conflicts with other local Supabase projects).
+
+   Apply the database migrations if this is the first time:
+
+   ```bash
+   supabase migration up
+   ```
+
+4. **Configure environment variables**
 
    Copy the example below into a `.env` file at the project root:
 
    ```env
-   VITE_SUPABASE_URL=https://your-project.supabase.co
-   VITE_SUPABASE_ANON_KEY=your-anon-key
-   VITE_MAPBOX_ACCESS_TOKEN=your-mapbox-token
+   VITE_SUPABASE_URL=http://127.0.0.1:55321
+   VITE_SUPABASE_ANON_KEY=eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZS1kZW1vIiwicm9sZSI6ImFub24iLCJleHAiOjE5ODM4MTI5OTZ9.CRXP1A7WOeoJeXxjNni43kdQwgnWNReilDMblYTn_I0
+   VITE_MAPBOX_TOKEN=your-mapbox-token
    ```
 
-4. **Start the development server**
+   For production, replace the Supabase values with your own project URL and anon key.
+
+5. **Start the development server**
 
    ```bash
    npm run dev
    ```
 
-5. **Open the app**
+6. **Open the app**
 
    Visit `http://localhost:5173` in your browser.
 
@@ -151,7 +171,7 @@ All runtime configuration is handled via environment variables prefixed with `VI
 |----------|---------|----------|
 | `VITE_SUPABASE_URL` | Your Supabase project URL | Yes |
 | `VITE_SUPABASE_ANON_KEY` | Your Supabase anonymous key | Yes |
-| `VITE_MAPBOX_ACCESS_TOKEN` | Mapbox public access token | Yes |
+| `VITE_MAPBOX_TOKEN` | Mapbox public access token | Yes |
 
 ---
 
@@ -221,14 +241,36 @@ The project expects a Supabase project with the following tables:
 | `id` | `integer` | Use `1` for the single game state row |
 | `threat_level` | `integer` | Global progress bar (100 → 0) |
 
+### Local Development
+
+This project is configured to run against a local Supabase instance in development. The local ports are defined in `supabase/config.toml` and use the `5532x` range to avoid conflicts with other local Supabase projects.
+
+Common commands:
+
+```bash
+# Start the local Supabase stack (Postgres, Auth, REST, Realtime, Studio)
+supabase start
+
+# Apply pending migrations
+supabase migration up
+
+# Stop the local stack
+supabase stop
+
+# View the local status and credentials
+supabase status --output env
+```
+
+The local Studio dashboard is available at `http://127.0.0.1:55323`.
+
 Run the included migration to bootstrap the schema:
 
 ```bash
-# Apply via the Supabase CLI or SQL editor
-supabase/migrations/000000000000_init_puzzles.sql
+# Apply via the Supabase CLI
+supabase migration up
 ```
 
-Enable **Realtime** on the `nodes` and `global_state` tables in the Supabase dashboard for live cross-team synchronization.
+Enable **Realtime** on the `nodes` and `global_state` tables for live cross-team synchronization. In local development, you can toggle Realtime on each table from the local Studio dashboard at `http://127.0.0.1:55323` (Database → Tables → Realtime). For production, enable Realtime in the Supabase dashboard.
 
 ---
 
