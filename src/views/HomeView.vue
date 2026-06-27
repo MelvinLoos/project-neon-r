@@ -59,6 +59,7 @@
       <div class="flex gap-4 mt-8">
         <router-link to="/phase-1" class="btn btn-secondary">Go to Phase 1 Briefing</router-link>
         <router-link to="/fieldwork" class="btn btn-primary cyber-button">Open Fieldwork View</router-link>
+        <router-link to="/convergence" class="btn btn-accent cyber-button">Phase 3 Convergence</router-link>
       </div>
     </main>
   </div>
