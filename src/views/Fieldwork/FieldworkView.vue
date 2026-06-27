@@ -71,10 +71,18 @@ const mapContainer = ref(null);
 const map = shallowRef(null);
 const userLocation = ref(null); // [lng, lat]
 const gpsStatus = ref('ACQUIRING...');
-const threatLevel = ref(68); // Example threat level
+
+import { usePuzzleStore } from '../../stores/puzzle';
+import { computed } from 'vue';
+
+const puzzleStore = usePuzzleStore();
+
+const threatLevel = computed(() => puzzleStore.globalThreatLevel);
+
 let locationWatchId = null;
 
 // Target nodes data (Mock data for Phase 2)
+// In a real scenario, this would come from puzzleStore.nodes
 const targets = ref([
   { id: 'node-alpha', name: 'Alpha Server Relay', lngLat: [-74.006, 40.7128], radius: 50 }, // radius in meters
   { id: 'node-beta', name: 'Beta Data Cache', lngLat: [-74.010, 40.7150], radius: 30 }
@@ -91,7 +99,9 @@ const targetMarkers = ref([]);
 mapboxgl.accessToken = import.meta.env.VITE_MAPBOX_TOKEN;
 
 // === Initialization ===
-onMounted(() => {
+onMounted(async () => {
+  await puzzleStore.fetchGameState();
+  puzzleStore.initRealtime();
   initMap();
   startLocationTracking();
 });
@@ -103,6 +113,7 @@ onUnmounted(() => {
   if (locationWatchId !== null && navigator.geolocation) {
     navigator.geolocation.clearWatch(locationWatchId);
   }
+  puzzleStore.stopRealtime();
 });
 
 
