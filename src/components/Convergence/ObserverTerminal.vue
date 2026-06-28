@@ -2,7 +2,21 @@
   <div class="space-y-4 sm:space-y-6 relative z-10">
     <!-- AR Scanner -->
     <section class="w-full mb-4 sm:mb-8 relative border border-blue-900 rounded-lg overflow-hidden bg-black" style="min-height: 300px; height: 50vh;">
-      <div id="mindar-container" class="w-full h-full absolute inset-0 bg-slate-800 bg-[linear-gradient(rgba(14,165,233,0.1)_1px,transparent_1px),linear-gradient(90deg,rgba(14,165,233,0.1)_1px,transparent_1px)] bg-[size:20px_20px] animate-pulse"></div>
+      <a-scene
+        v-if="!store.targetFound"
+        mindar-image="imageTargetSrc: /targets/convergence.mind; autoStart: true;"
+        embedded
+        vr-mode-ui="enabled: false"
+        class="w-full h-full absolute inset-0"
+        @targetFound="handleTargetFound"
+      >
+        <a-camera position="0 0 0" look-controls="enabled: false" raycaster="objects: .clickable" cursor="fuse: false; rayOrigin: mouse;"></a-camera>
+        <a-entity mindar-image-target="targetIndex: 0">
+          <a-plane class="clickable" color="#00ffff" opacity="0.5" position="0 0 0" height="0.5" width="0.5" rotation="0 0 0"></a-plane>
+        </a-entity>
+      </a-scene>
+
+      <!-- Overlay UI -->
       <div class="absolute inset-0 z-10 flex flex-col justify-between p-2 sm:p-4 pointer-events-none">
         <div class="flex justify-between items-start">
           <div class="bg-black/60 p-2 rounded border border-blue-500/50 backdrop-blur-sm">
@@ -12,6 +26,10 @@
           <div :class="['px-2 sm:px-3 py-1 rounded font-mono text-[10px] sm:text-xs border', store.scanStatus === 'MARKER LOCK ACQUIRED' ? 'bg-blue-600/80 text-white border-blue-400' : 'bg-black/80 text-blue-400 border-blue-700 animate-pulse']">
             {{ store.scanStatus }}
           </div>
+        </div>
+
+        <div v-if="mindarError" class="self-center bg-error/80 text-error-content px-4 py-2 rounded text-xs text-center">
+          {{ mindarError }}
         </div>
 
         <div class="self-center flex-grow flex items-center justify-center">
@@ -65,7 +83,26 @@
 </template>
 
 <script setup>
+import 'mind-ar/dist/mindar-image-aframe.prod.js';
 import { useConvergenceStore } from '../../stores/convergence';
+import { onMounted, onUnmounted, ref } from 'vue';
 
 const store = useConvergenceStore();
+const mindarError = ref(null);
+
+const handleTargetFound = () => {
+  store.identifySymbol();
+};
+
+onUnmounted(() => {
+  // Stop any active MindAR/A-Frame scenes if needed
+  const scene = document.querySelector('a-scene[mindar-image]');
+  if (scene && scene.systems && scene.systems['mindar-image']) {
+    try {
+      scene.systems['mindar-image'].stop();
+    } catch (err) {
+      console.warn('Error stopping MindAR:', err);
+    }
+  }
+});
 </script>
