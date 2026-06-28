@@ -8,6 +8,10 @@ CREATE TABLE IF NOT EXISTS public.nodes (
     status text NOT NULL DEFAULT 'locked', -- 'locked', 'unlocked', 'solved'
     required_node_id uuid REFERENCES public.nodes(id), -- If another node needs to be solved first
     description text,
+    -- Location data for Mapbox fieldwork
+    lat double precision,
+    lng double precision,
+    radius integer DEFAULT 50, -- radius in meters
     created_at timestamp with time zone DEFAULT timezone('utc'::text, now()) NOT NULL
 );
 

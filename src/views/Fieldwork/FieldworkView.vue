@@ -130,12 +130,18 @@ const threatLevel = computed(() => puzzleStore.globalThreatLevel);
 
 let locationWatchId = null;
 
-// Target nodes data (Mock data for Phase 2)
-// In a real scenario, this would come from puzzleStore.nodes
-const targets = ref([
-  { id: 'node-alpha', name: 'Alpha Server Relay', lngLat: [-74.006, 40.7128], radius: 50 }, // radius in meters
-  { id: 'node-beta', name: 'Beta Data Cache', lngLat: [-74.010, 40.7150], radius: 30 }
-]);
+// Targets are sourced from the Supabase nodes via the puzzle store.
+const targets = computed(() => {
+  return puzzleStore.nodes
+    .filter(node => node.lat != null && node.lng != null)
+    .map(node => ({
+      id: node.id,
+      name: node.name,
+      lngLat: [node.lng, node.lat],
+      radius: node.radius || 50,
+      status: node.status
+    }));
+});
 
 const activeTarget = ref(null);
 const distanceToTarget = ref(Infinity);
@@ -151,7 +157,26 @@ const isAtTarget = ref(false);
 const userMarker = shallowRef(null);
 const targetMarkers = ref([]);
 
-// Mapbox access token must be set in .env as VITE_MAPBOX_TOKEN
+// Re-render map targets when nodes change (e.g. via realtime sync)
+watch(targets, (newTargets, oldTargets) => {
+  if (!map.value) return;
+  // Clear old markers and geofences
+  targetMarkers.value.forEach(marker => marker.remove());
+  targetMarkers.value = [];
+  // Remove old geofence layers/sources
+  oldTargets?.forEach(target => {
+    if (map.value.getLayer(`geofence-${target.id}-fill`)) {
+      map.value.removeLayer(`geofence-${target.id}-fill`);
+    }
+    if (map.value.getLayer(`geofence-${target.id}-line`)) {
+      map.value.removeLayer(`geofence-${target.id}-line`);
+    }
+    if (map.value.getSource(`geofence-${target.id}`)) {
+      map.value.removeSource(`geofence-${target.id}`);
+    }
+  });
+  renderTargets();
+}, { deep: true });
 mapboxgl.accessToken = import.meta.env.VITE_MAPBOX_TOKEN;
 
 // === Initialization ===
@@ -181,7 +206,7 @@ const initMap = () => {
   map.value = new mapboxgl.Map({
     container: mapContainer.value,
     style: 'mapbox://styles/mapbox/dark-v11', // A dark abstract style
-    center: [-74.006, 40.7128], // Default to NYC, will update on GPS
+    center: [4.4792, 51.9225], // Default to Rotterdam (Groothandelsgebouw), will update on GPS
     zoom: 15,
     pitch: 45, // 3D-ish view
     bearing: 0,
@@ -261,24 +286,36 @@ const updateLocation = (position) => {
 };
 
 const renderTargets = () => {
+  if (!map.value) return;
+
   targets.value.forEach(target => {
     // Basic marker
     const el = document.createElement('div');
     el.className = 'w-6 h-6 bg-secondary/80 rounded diamond-shape border border-secondary shadow-[0_0_20px_#00ffff] animate-bounce';
-    
+
     const marker = new mapboxgl.Marker({ element: el })
       .setLngLat(target.lngLat)
       .addTo(map.value);
-      
+
     targetMarkers.value.push(marker);
 
     // Draw Geofence circle
     drawGeofence(target);
   });
 
-  // Set initial active target for demo (normally you'd find the closest)
+  // Pick the closest unlocked/solved node as the active target, otherwise the first available
   if (targets.value.length > 0) {
-    activeTarget.value = targets.value[0];
+    if (userLocation.value) {
+      const userPoint = turf.point(userLocation.value);
+      const sorted = [...targets.value].sort((a, b) => {
+        const distA = turf.distance(userPoint, turf.point(a.lngLat), { units: 'meters' });
+        const distB = turf.distance(userPoint, turf.point(b.lngLat), { units: 'meters' });
+        return distA - distB;
+      });
+      activeTarget.value = sorted[0];
+    } else {
+      activeTarget.value = targets.value[0];
+    }
   }
 };
 
