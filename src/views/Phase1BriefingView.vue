@@ -104,12 +104,28 @@ const teams = ref([
 ]);
 
 
+const requestFullscreen = async () => {
+  const element = document.documentElement;
+  if (element.requestFullscreen) {
+    try {
+      await element.requestFullscreen();
+    } catch (err) {
+      console.warn('Fullscreen request failed:', err);
+    }
+  } else if (element.webkitRequestFullscreen) {
+    element.webkitRequestFullscreen();
+  } else if (element.msRequestFullscreen) {
+    element.msRequestFullscreen();
+  }
+};
+
 const triggerTakeover = () => {
   if (state.step !== 'locked') return;
 
   state.step = 'takeover';
   state.isHacked = true;
   playWarning();
+  requestFullscreen();
 
   let logIndex = 0;
   logInterval = setInterval(() => {

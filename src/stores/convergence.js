@@ -71,9 +71,16 @@ export const useConvergenceStore = defineStore('convergence', () => {
     }
   };
 
+  const vibrate = (pattern) => {
+    if (navigator && 'vibrate' in navigator) {
+      navigator.vibrate(pattern);
+    }
+  };
+
   const mashShield = () => {
     if (missionAccomplished.value) return;
     stability.value = Math.min(100, stability.value + 5);
+    vibrate(15);
     broadcastAction({ type: 'mash', value: 5 });
   };
 
@@ -81,10 +88,12 @@ export const useConvergenceStore = defineStore('convergence', () => {
     if (missionAccomplished.value) return false;
     if (codeProgress.value === n - 1) {
       codeProgress.value = n;
+      vibrate(25);
       broadcastAction({ type: 'code_progress', value: codeProgress.value });
       checkWin();
       return true;
     }
+    vibrate([100, 50, 100]);
     return false;
   };
 

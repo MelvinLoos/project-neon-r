@@ -42,7 +42,6 @@
                   store.codeProgress >= n ? 'border-purple-500 text-purple-400 shadow-[0_0_20px_rgba(168,85,247,0.6)] bg-purple-900/20' :
                   (store.codeProgress === n - 1 ? 'border-amber-500 text-amber-500 animate-pulse cursor-pointer hover:bg-amber-900/40 hover:scale-110 shadow-[0_0_15px_rgba(245,158,11,0.5)]' : 'border-base-100/20 text-slate-600 opacity-50 cursor-not-allowed')
                 ]"
-                :disabled="store.codeProgress !== n - 1"
               >
                 {{ n }}
               </button>
