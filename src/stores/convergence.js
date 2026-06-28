@@ -19,9 +19,9 @@ export const useConvergenceStore = defineStore('convergence', () => {
 
   const roleDisplayName = computed(() => {
     switch (selectedRole.value) {
-      case 'shield': return 'Shield Operator';
-      case 'codebreaker': return 'Code Breaker';
-      case 'intel': return 'Intel / Observer';
+      case 'shield': return 'phase3.roleShield.name';
+      case 'codebreaker': return 'phase3.roleCodebreaker.name';
+      case 'intel': return 'phase3.roleObserver.name';
       default: return '';
     }
   });

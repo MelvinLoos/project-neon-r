@@ -9,12 +9,12 @@
             [ {{ $t('app.retreat') }} ]
           </button>
           <div class="text-primary font-bold text-xs sm:text-base md:text-lg tracking-widest uppercase">
-            Sector Agent Active
+            {{ $t('phase2.sectorAgentActive') }}
           </div>
         </div>
         <div class="flex items-center gap-2 sm:gap-3">
           <div class="text-[10px] sm:text-xs text-info uppercase animate-pulse">
-            GPS: <span class="font-mono">{{ gpsStatus }}</span>
+            {{ $t('phase2.gpsLabel') }} <span class="font-mono">{{ gpsStatus }}</span>
           </div>
         </div>
       </div>
@@ -22,7 +22,7 @@
       <!-- Global Threat Level -->
       <div class="bg-neutral/80 p-2 sm:p-3 rounded-lg border border-error/40 backdrop-blur-md">
         <div class="flex justify-between text-[10px] sm:text-xs mb-1">
-          <span class="text-error uppercase font-bold tracking-wider">Threat</span>
+          <span class="text-error uppercase font-bold tracking-wider">{{ $t('phase2.threatLabel') }}</span>
           <span class="text-error font-mono">{{ threatLevel }}%</span>
         </div>
         <progress class="progress progress-error w-full bg-error/20" :value="threatLevel" max="100"></progress>
@@ -40,10 +40,10 @@
           <div class="flex justify-between items-start">
             <div>
               <h3 class="text-secondary font-bold text-base sm:text-xl">{{ activeTarget.name }}</h3>
-              <p class="text-xs sm:text-sm text-gray-400">Distance: <span class="font-mono text-white">{{ formatDistance(distanceToTarget) }}</span></p>
+              <p class="text-xs sm:text-sm text-gray-400">{{ $t('phase2.distanceLabel') }} <span class="font-mono text-white">{{ formatDistance(distanceToTarget) }}</span></p>
             </div>
             <div class="badge text-[10px] sm:text-xs" :class="isAtTarget ? 'badge-success' : 'badge-warning min-w-[60px] sm:min-w-[80px]'">
-              {{ isAtTarget ? 'IN RANGE' : 'APPROACH' }}
+              {{ isAtTarget ? $t('phase2.inRange') : $t('phase2.approach') }}
             </div>
           </div>
           
@@ -52,12 +52,12 @@
             :disabled="!isAtTarget"
             @click="unlockPuzzle"
           >
-            {{ isAtTarget ? 'Initiate Hack' : 'Move Closer' }}
+            {{ isAtTarget ? $t('phase2.initiateHack') : $t('phase2.moveCloser') }}
           </button>
         </div>
         
         <div v-else class="text-center py-2 sm:py-4">
-          <p class="text-gray-400 italic text-xs sm:text-sm">Scanning for nearby nodes...</p>
+          <p class="text-gray-400 italic text-xs sm:text-sm">{{ $t('phase2.scanningNodes') }}</p>
           <span class="loading loading-ring loading-sm sm:loading-md text-primary mt-2"></span>
         </div>
 
@@ -69,10 +69,13 @@
 <script setup>
 import { ref, onMounted, onUnmounted, shallowRef } from 'vue';
 import { useRouter } from 'vue-router';
+import { useI18n } from 'vue-i18n';
 import mapboxgl from 'mapbox-gl';
 import * as turf from '@turf/turf';
 
 // === State ===
+const { t } = useI18n();
+
 const router = useRouter();
 const mapContainer = ref(null);
 const map = shallowRef(null);
@@ -298,7 +301,7 @@ const formatDistance = (meters) => {
 const unlockPuzzle = () => {
   if (isAtTarget.value) {
     // Navigate to puzzle view or open modal
-    alert('Hack Sequence Initiated! (Routing to puzzle...)');
+    alert(t('phase2.hackInitiated'));
   }
 };
 </script>
