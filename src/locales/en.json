@@ -56,7 +56,15 @@
     "moveCloser": "Move Closer",
     "scanningNodes": "Scanning for nearby nodes...",
     "distanceLabel": "Distance:",
-    "hackInitiated": "Hack Sequence Initiated! (Routing to puzzle...)"
+    "hackInitiated": "Hack Sequence Initiated! (Routing to puzzle...)",
+    "scanQrCode": "Scan QR Code",
+    "qrScannerTitle": "QR Node Scanner",
+    "qrScannerError": "Unable to access camera. Use the fallback code below.",
+    "qrFallbackLabel": "Fallback Code",
+    "qrFallbackPlaceholder": "Enter node code manually",
+    "qrFallbackSubmit": "Submit",
+    "qrScannerClose": "Close Scanner",
+    "qrSuccess": "Node unlocked! Code:"
   },
   "phase3": {
     "title": "Phase 3: Convergence Base",

@@ -56,7 +56,15 @@
     "moveCloser": "Kom dichterbij",
     "scanningNodes": "Scannen naar nabijgelegen nodes...",
     "distanceLabel": "Afstand:",
-    "hackInitiated": "Hack-sequentie gestart! (Doorverwijzen naar puzzel...)"
+    "hackInitiated": "Hack-sequentie gestart! (Doorverwijzen naar puzzel...)",
+    "scanQrCode": "Scan QR Code",
+    "qrScannerTitle": "QR Node Scanner",
+    "qrScannerError": "Kan geen camera openen. Gebruik de fallback code hieronder.",
+    "qrFallbackLabel": "Fallback Code",
+    "qrFallbackPlaceholder": "Voer node code handmatig in",
+    "qrFallbackSubmit": "Verstuur",
+    "qrScannerClose": "Sluit Scanner",
+    "qrSuccess": "Node ontgrendeld! Code:"
   },
   "phase3": {
     "title": "Fase 3: Convergentie Basis",

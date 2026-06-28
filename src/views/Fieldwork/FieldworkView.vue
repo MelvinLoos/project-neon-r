@@ -54,6 +54,14 @@
           >
             {{ isAtTarget ? $t('phase2.initiateHack') : $t('phase2.moveCloser') }}
           </button>
+
+          <button
+            v-if="isAtTarget"
+            class="btn btn-primary w-full uppercase tracking-wider sm:tracking-widest font-bold text-xs sm:text-sm"
+            @click="openQrScanner"
+          >
+            {{ $t('phase2.scanQrCode') }}
+          </button>
         </div>
         
         <div v-else class="text-center py-2 sm:py-4">
@@ -64,14 +72,45 @@
       </div>
     </div>
   </div>
+
+  <!-- QR Scanner Modal -->
+  <div v-if="isQrScanning" class="fixed inset-0 z-50 bg-black/90 flex flex-col items-center justify-center p-4">
+    <div class="w-full max-w-md bg-base-300 border border-primary/50 rounded-xl p-4 sm:p-6 shadow-[0_0_30px_rgba(255,0,255,0.2)]">
+      <h3 class="text-primary font-bold text-lg uppercase tracking-widest mb-4 text-center">{{ $t('phase2.qrScannerTitle') }}</h3>
+      
+      <div class="relative rounded-lg overflow-hidden bg-black border border-secondary/50 mb-4" style="min-height: 240px;">
+        <div :id="QrScannerElementId" class="w-full h-full"></div>
+        <div v-if="qrScannerError" class="absolute inset-0 flex items-center justify-center bg-black/80 p-4 text-center">
+          <p class="text-error text-sm">{{ qrScannerError }}</p>
+        </div>
+      </div>
+
+      <div class="flex flex-col gap-3">
+        <label class="text-xs uppercase tracking-wider text-slate-400">{{ $t('phase2.qrFallbackLabel') }}</label>
+        <div class="flex gap-2">
+          <input 
+            v-model="fallbackCode"
+            type="text"
+            class="input input-bordered input-sm flex-grow"
+            :placeholder="$t('phase2.qrFallbackPlaceholder')"
+          />
+          <button @click="submitFallbackCode" class="btn btn-sm btn-secondary">{{ $t('phase2.qrFallbackSubmit') }}</button>
+        </div>
+      </div>
+
+      <button @click="closeQrScanner" class="btn btn-outline btn-error btn-sm w-full mt-4">{{ $t('phase2.qrScannerClose') }}</button>
+    </div>
+  </div>
+
 </template>
 
 <script setup>
-import { ref, onMounted, onUnmounted, shallowRef } from 'vue';
+import { ref, onMounted, onUnmounted, shallowRef, nextTick } from 'vue';
 import { useRouter } from 'vue-router';
 import { useI18n } from 'vue-i18n';
 import mapboxgl from 'mapbox-gl';
 import * as turf from '@turf/turf';
+import { Html5Qrcode } from 'html5-qrcode';
 
 // === State ===
 const { t } = useI18n();
@@ -100,6 +139,13 @@ const targets = ref([
 
 const activeTarget = ref(null);
 const distanceToTarget = ref(Infinity);
+const isQrScanning = ref(false);
+const qrScannerError = ref(null);
+const fallbackCode = ref('');
+let html5QrCode = null;
+
+const QrScannerElementId = 'qr-code-scanner';
+
 const isAtTarget = ref(false);
 
 const userMarker = shallowRef(null);
@@ -303,6 +349,75 @@ const unlockPuzzle = () => {
     // Navigate to puzzle view or open modal
     alert(t('phase2.hackInitiated'));
   }
+
+const openQrScanner = async () => {
+  isQrScanning.value = true;
+  qrScannerError.value = null;
+  fallbackCode.value = '';
+
+  await nextTick();
+
+  html5QrCode = new Html5Qrcode(QrScannerElementId);
+  try {
+    await html5QrCode.start(
+      { facingMode: 'environment' },
+      { fps: 10, qrbox: { width: 200, height: 200 } },
+      (decodedText) => {
+        handleQrSuccess(decodedText);
+      },
+      () => {
+        // Ignore scan failures; they happen frequently when no QR is in frame
+      }
+    );
+  } catch (err) {
+    console.error('QR scanner failed to start:', err);
+    qrScannerError.value = t('phase2.qrScannerError');
+  }
+};
+
+const closeQrScanner = async () => {
+  if (html5QrCode) {
+    try {
+      await html5QrCode.stop();
+    } catch (err) {
+      console.warn('QR scanner stop error:', err);
+    }
+    html5QrCode = null;
+  }
+  isQrScanning.value = false;
+  qrScannerError.value = null;
+};
+
+const handleQrSuccess = async (code) => {
+  await closeQrScanner();
+  completeNodeUnlock(code);
+};
+
+const submitFallbackCode = async () => {
+  const code = fallbackCode.value.trim();
+  if (!code) return;
+  await closeQrScanner();
+  completeNodeUnlock(code);
+};
+
+const completeNodeUnlock = async (code) => {
+  if (!activeTarget.value) return;
+
+  // Try to solve the active node via the puzzle store if it exists
+  const nodeId = activeTarget.value.id;
+  const node = puzzleStore.getNodeById(nodeId);
+
+  if (node) {
+    try {
+      await puzzleStore.solveNode(nodeId);
+    } catch (err) {
+      console.error('Error solving node:', err);
+    }
+  }
+
+  alert(`${t('phase2.qrSuccess')} ${code}`);
+};
+
 };
 </script>
 
